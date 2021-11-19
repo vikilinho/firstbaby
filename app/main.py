@@ -3,8 +3,9 @@ from fastapi import Body
 
 
 from random import randrange
-from registration import Registration
-from login import Login
+from app.registration import Registration
+from app.login import Login
+from app.user import User
 
 
 app = FastAPI()
@@ -50,11 +51,13 @@ def find_index(userID):
 
 # method for updating the user details
 @app.put("/user_details/{userID}")
-async def update_user(userID: int, registration: Registration):
+async def update_user(userID: int, user_data: User):
     index = find_index(userID)
-    if index is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    userdata = registration.dict()
+    if index == None:
+        raise HTTPException(
+            status_code=404, detail=f"post with id: {userID} does not exist")
+    userdata = user_data.dict()
+    userdata['userID'] = userID
     users_details[index] = userdata
     return {"data": userdata}
 
